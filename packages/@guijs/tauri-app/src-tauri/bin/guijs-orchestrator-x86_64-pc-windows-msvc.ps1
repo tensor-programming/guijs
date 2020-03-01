@@ -17,13 +17,15 @@ if ($mode -eq "run") {
     $path_id = Start-Process -FilePath $path -PassThru -NoNewWindow 
     
     # get the guijs process and wait until it stops before executing the rest of the code
-    Get-Process -Name $appName, msiexec -ErrorAction SilentlyContinue | Wait-Process  
+    Get-Process -Name $appName -ErrorAction SilentlyContinue | Wait-Process  
     
     # stop the server process
     Stop-Process -Id $path_id
 
     # stop the webview process
-    Stop-Process -Id $webviewProcessName
+    Stop-Process -Name $webviewProcessName
+
+    Stop-Process -Name $appName
 
     # stop the powershell process
     Stop-process -Id $PID
