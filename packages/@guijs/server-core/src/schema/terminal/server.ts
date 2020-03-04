@@ -31,11 +31,14 @@ export class Terminal extends EventEmitter {
   hidden: boolean
   running = false
   killed = false
+  envPath: string[] = []
   pty: IPty
   batcher: DataBatcher
   sockets: ws[] = []
   backupFile: string
   backupStream: fs.WriteStream
+  cols = 200
+  rows = 30
 
   constructor (options: TerminalOptions) {
     super()
@@ -76,11 +79,14 @@ export class Terminal extends EventEmitter {
       command = defaultShell
     }
 
+    const env = getPtyEnv()
+    env.PATH = this.envPath.concat(env.PATH).join(";")
+
     const ptyOptions: IWindowsPtyForkOptions = {
-      cols: 200,
-      rows: 30,
+      cols: this.cols,
+      rows: this.rows,
       cwd: this.cwd,
-      env: getPtyEnv(),
+      env: env,
     }
 
     this.pty = spawnPty(command, args, ptyOptions)
