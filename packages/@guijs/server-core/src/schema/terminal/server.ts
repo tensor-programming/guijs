@@ -8,6 +8,7 @@ import { EventEmitter } from 'events'
 import consola from 'consola'
 import fs from 'fs-extra'
 import path from 'path'
+import os from 'os'
 import projectPackage from '../../../package.json'
 import { DataBatcher } from './data-batcher'
 import { rcFolder } from '@/util/rc-folder'
@@ -69,6 +70,11 @@ export class Terminal extends EventEmitter {
 
     this.running = true
     this.killed = false
+
+    if (os.platform() === 'win32' && command !== defaultShell) {
+      args.unshift('/c', command)
+      command = defaultShell
+    }
 
     const ptyOptions: IWindowsPtyForkOptions = {
       cols: 200,
